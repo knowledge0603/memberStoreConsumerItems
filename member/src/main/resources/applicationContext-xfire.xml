@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+	<!-- 引入XFire预配置信息 -->
+	<import resource="classpath:org/codehaus/xfire/spring/xfire.xml" />
+	<!-- 使用XFire导出器 -->
+	<bean id="baseWebService" class="org.codehaus.xfire.spring.remoting.XFireExporter"
+		lazy-init="false" abstract="true">
+		<property name="serviceFactory" ref="xfire.serviceFactory" />
+		<property name="xfire" ref="xfire" />
+	</bean>
+	<!-- memberTranscation -->
+	<bean id="memberTranscation" parent="baseWebService">
+		<property name="serviceBean" ref="memberTranscationImpl"/>
+		<property name="serviceClass" value="com.aaazx.member.i000.service.IMemberTranscation"></property>
+	</bean>
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="urlMap">
+			<map>
+				<entry key="/memberTranscation.ws">
+					<ref bean="memberTranscation"/>
+				</entry>
+			</map>
+		</property>
+	</bean>
+</beans>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+	<!-- 自动扫描与装配bean -->
+	<context:annotation-config />
+	<context:component-scan base-package="com.aaazx.member" />
+
+	<!-- 数据源配置信息 开始 -->
+	<context:property-placeholder location="classpath:jdbc.properties" />
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${driverClass}"></property>
+		<property name="url" value="${jdbcUrl}"></property>
+		<property name="username" value="${username}"></property>
+		<property name="password" value="${password}"></property>
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mappingResources">
+			<!-- list中的是pojo 这里直接映射的pojo类的包，简单方便不用每次加一个pojo类 -->
+			<list>
+				
+			</list>
+		</property>
+		<!-- 下面是hibernate的配置 -->
+		<property name="hibernateProperties">
+			<props>
+				<!-- 设置Mysql的方言 -->
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.MySQLDialect
+					<!-- sql server 配置 
+					net.sf.hibernate.dialect.SQLServerDialect -->
+				</prop>
+				<!-- 在控制台显示sql语句 -->
+				<prop key="hibernate.show_sql">
+					true
+				</prop>
+				<!-- 自动更新数据库 
+				<prop key="hbm2ddl.auto">update</prop>
+				-->
+			</props>
+		</property>
+	</bean>
+	<!-- 数据源配置信息 结束-->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg ref="dataSource" />
+	</bean>
+</beans>
